@@ -77,7 +77,7 @@ if (basin, data_type) in gdrive_links:
                     markers=True,
                     labels={y_column: 'Value (cm)', 'year': 'Year'}
                 )
-                fig.update_layout(template="plotly_white")
+                fig.update_layout(template="plotly_dark")
                 st.plotly_chart(fig, use_container_width=True)
 
         except Exception as e:
@@ -96,7 +96,6 @@ else:
 # -------------------------------
 st.subheader("Basin Map (Interactive)")
 
-# 3D View Links (replace with real 3D views later)
 basin_3d_links = {
     "Chenab": "https://docs.mapbox.com/mapbox-gl-js/example/terrain/",
     "Indus": "https://docs.mapbox.com/mapbox-gl-js/example/terrain/",
@@ -105,7 +104,6 @@ basin_3d_links = {
     "Swat": "https://docs.mapbox.com/mapbox-gl-js/example/terrain/"
 }
 
-# Button to view 3D map
 col3d, _ = st.columns([1, 9])
 with col3d:
     if st.button("🌐 View 3D Map"):
@@ -113,7 +111,7 @@ with col3d:
         if link:
             html(f"<script>window.open('{link}', '_blank')</script>", height=0)
 
-# Define AOI for each basin
+# Define AOI boundaries
 if basin == "Chenab":
     min_lon, min_lat = 73.5, 32.5
     max_lon, max_lat = 76.0, 34.5
@@ -138,11 +136,11 @@ else:
     min_lon = min_lat = max_lon = max_lat = None
     label = None
 
-# Display the Folium map
+# Show Map with CartoDB English tiles
 if label:
     center_lat = (min_lat + max_lat) / 2
     center_lon = (min_lon + max_lon) / 2
-    m = folium.Map(location=[center_lat, center_lon], zoom_start=7, tiles="OpenStreetMap")
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=7, tiles="CartoDB positron")
     folium.Rectangle(
         bounds=[[min_lat, min_lon], [max_lat, max_lon]],
         color="blue",
