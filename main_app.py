@@ -1,5 +1,3 @@
-# main_app.py
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -53,13 +51,12 @@ if (basin, data_type) in gdrive_links:
             df['date'] = pd.to_datetime(df['date'], errors='coerce')
             df['year'] = df['date'].dt.year
 
-            # Dynamic y-column detection
             if 'mean_snow_depth_cm' in df.columns:
                 y_column = 'mean_snow_depth_cm'
             elif 'mean_SCA' in df.columns:
                 y_column = 'mean_SCA'
             else:
-                y_column = df.columns[2]  # fallback
+                y_column = df.columns[2]
 
             yearly_avg = df.groupby('year')[y_column].mean().reset_index()
 
@@ -95,10 +92,28 @@ else:
         st.info("Graph will be shown here once data is connected.")
 
 # -------------------------------
-# Basin AOI Map (Folium)
+# Basin AOI Map + 3D Button
 # -------------------------------
 st.subheader("Basin Map (Interactive)")
 
+# 3D View Links (replace with real 3D views later)
+basin_3d_links = {
+    "Chenab": "https://docs.mapbox.com/mapbox-gl-js/example/terrain/",
+    "Indus": "https://docs.mapbox.com/mapbox-gl-js/example/terrain/",
+    "Jhelum": "https://docs.mapbox.com/mapbox-gl-js/example/terrain/",
+    "Kabul": "https://docs.mapbox.com/mapbox-gl-js/example/terrain/",
+    "Swat": "https://docs.mapbox.com/mapbox-gl-js/example/terrain/"
+}
+
+# Button to view 3D map
+col3d, _ = st.columns([1, 9])
+with col3d:
+    if st.button("🌐 View 3D Map"):
+        link = basin_3d_links.get(basin)
+        if link:
+            html(f"<script>window.open('{link}', '_blank')</script>", height=0)
+
+# Define AOI for each basin
 if basin == "Chenab":
     min_lon, min_lat = 73.5, 32.5
     max_lon, max_lat = 76.0, 34.5
@@ -123,6 +138,7 @@ else:
     min_lon = min_lat = max_lon = max_lat = None
     label = None
 
+# Display the Folium map
 if label:
     center_lat = (min_lat + max_lat) / 2
     center_lon = (min_lon + max_lon) / 2
